@@ -52,7 +52,7 @@ $ sudo vim /etc/nginx/sites-available/your_project
 將以下內容貼上
 server {
     listen 80;
-    server_name news-quiz-ai.ix.tc;  # 或寫 IP，例如 123.123.123.123
+    server_name newsmind-ai.ix.tc;  # 或寫 IP，例如 123.123.123.123
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -85,12 +85,12 @@ $ cd backend/
 $ python manage.py collectstatic
 $ vim backend/settings.py
 ALLOWED_HOSTS加入以下內容
-ALLOWED_HOSTS = ['輸入機器對外IP', 'news-quiz-ai.ix.tc']
+ALLOWED_HOSTS = ['輸入機器對外IP', 'newsmind-ai.ix.tc']
 
 $ nohup ../venv/bin/gunicorn backend.wsgi --bind 127.0.0.1:8000 --access-logfile - --error-logfile gunicorn-error.log --timeout 180 > gunicorn.out 2>&1 &
 ```
 
-到這一步，就可以用 http://news-quiz-ai.ix.tc 瀏覽網站
+到這一步，就可以用 http://newsmind-ai.ix.tc 瀏覽網站
 
 ### 設定https
 ```bash
@@ -98,4 +98,4 @@ $ sudo apt install certbot python3-certbot-nginx
 $ sudo certbot --nginx
 ```
 
-可以用 https://news-quiz-ai.ix.tc 瀏覽網站
+可以用 https://newsmind-ai.ix.tc 瀏覽網站
