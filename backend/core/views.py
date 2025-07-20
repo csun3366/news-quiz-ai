@@ -33,9 +33,12 @@ def get_articles_by_category(request):
 
 # 網址: https://api.laozhang.ai/
 LAOZHANG_API_KEYS = [
-    "ssk-XZOM86ImafdhclzI267fDd5eEfD94717A70bD6DbB7D899A1", # pardeep15
+    "sk-XZOM86ImafdhclzI267fDd5eEfD94717A70bD6DbB7D899A1", # pardeep15
     "sk-nGuEGXAvmPBp3ICW7fC6EaD635C6432a86A46cD38837F367", # usg1l
     "sk-X4jOQt8d6Gqygrt299B945A84163491c90B15dB7F0352290", # woyapik494
+    "sk-yyJ2Cxg4FlGUiyWTB3F396FeCcC6427798F27c24020bD577", # chevonne.72
+    "sk-LRJ147WrEMXlyxgv2aA86a4b5e8b45949bE24a70024f2951", # neofqxqs
+    "sk-ViLG6Ho69IKbnoVS7c9fB32380C84aAdA8A12cC573C497B8", # duj0xmlh
 ]
 def chat_with_laozhang(messages, model="deepseek-v3"):
     base_url = "https://api.laozhang.ai/v1"
