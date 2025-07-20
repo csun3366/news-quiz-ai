@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NewsMind</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+</head>
+<body class="bg-[#0F1117] text-white min-h-screen">
+  <!-- 主題選擇區塊 -->
+  <div class="flex items-center justify-center min-h-screen" id="topic-section">
+    <div class="w-full max-w-xl px-6 text-center">
+      <h1 class="text-5xl font-extrabold mb-4 tracking-tight">NewsMind</h1>
+      <h3 class="text-lg text-gray-400 mb-10">用 AI 把國際新聞變成你的每日閱讀練習</h3>
+
+      <div class="mb-6 text-left">
+        <label for="source" class="block mb-2 text-lg font-medium">選擇來源：</label>
+        <select id="source" class="bg-[#1C1E26] border border-gray-600 rounded px-4 py-2 w-full text-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+          <option value="cnn">CNN</option>
+        </select>
+      </div>
+
+      <div class="mb-6 text-left">
+        <label for="topic" class="block mb-2 text-lg font-medium">選擇主題：</label>
+        <select id="topic" class="bg-[#1C1E26] border border-gray-600 rounded px-4 py-2 w-full text-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="world">國際</option>
+          <option value="tech">科技</option>
+          <option value="business">商業</option>
+          <option value="entertainment">娛樂</option>
+          <option value="sport">運動</option>
+        </select>
+      </div>
+
+      <button onclick="searchArticles()" class="bg-blue-600 hover:bg-blue-700 w-full py-3 text-lg font-semibold rounded transition-all duration-200">
+        搜索文章
+      </button>
+    </div>
+  </div>
+
+  <!-- 文章區塊 -->
+  <div class="max-w-5xl mx-auto px-6 pt-6" id="content-section">
+    <div id="articles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden mt-4"></div>
+
+    <!-- 顯示選取的文章標題 -->
+    <div id="selected-article-title" class="hidden mt-10 mb-4 text-xl font-semibold text-white"></div>
+
+    <!-- 題型選擇 -->
+    <div id="question-options" class="mb-6 hidden mt-10">
+      <label for="type" class="block mb-2 text-lg font-medium mt-8">選擇題型：</label>
+      <select id="type" class="bg-[#1C1E26] border border-gray-600 rounded px-4 py-2 w-full text-lg focus:outline-none focus:ring-2 focus:ring-green-500">
+        <option value="reading">閱讀理解</option>
+        <!-- TODO: 目前只支援閱讀理解 -->
+        <!-- <option value="cloze">克漏字</option>  -->
+        <!-- <option value="summary">摘要填空</option>  -->
+      </select>
+    </div>
+
+    <!-- 生成試題按鈕 -->
+    <button id="generate-btn" onclick="generateQuestions()" class="hidden bg-green-600 hover:bg-green-700 w-full py-3 text-lg font-semibold rounded mb-10 transition-all duration-200">
+      生成練習題
+    </button>
+
+    <!-- 題目區 -->
+    <div id="question-area" class="hidden bg-[#1C1E26] p-6 rounded-lg">
+      <!-- 動態標題：顯示題型與文章標題 -->
+      <!-- 題目資訊 -->
+      <div class="mb-6">
+        <p id="question-type-display" class="text-sm text-gray-400 uppercase tracking-wider mb-1">
+          題目類型：閱讀理解
+        </p>
+        <h2 id="question-title-display" class="text-2xl md:text-3xl font-semibold text-white leading-snug">
+          標題：Children make up half of more than 170 killed in Pakistan floods
+        </h2>
+      </div>
+
+      <!-- 顯示文章內容 -->
+      <div id="article-content" class="mb-6 text-gray-200 whitespace-pre-wrap leading-relaxed text-lg"></div>
+
+      <!-- 題目容器 -->
+      <div id="questions-container" class="mb-6"></div>
+
+      <!-- 顯示答題結果 -->
+      <div id="result" class="text-green-400 font-semibold mt-4"></div>
+
+      <button onclick="submitAnswers()"
+              class="mt-4 bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded text-white font-semibold hidden"
+              id="submit-btn">
+        送出答案
+      </button>
+    </div>
+
+    <!-- 底部裝飾 -->
+    <div class="mt-12 h-2 w-full bg-gradient-to-r from-blue-600 via-blue-400 to-gray-500 rounded-full"></div>
+  </div>
+
+  <!-- JS -->
+  <script>
+    function getEmojiForCategory(category) {
+      switch (category) {
+        case 'world': return '🌍';
+        case 'business': return '💼';
+        case 'tech': return '💻';
+        case 'health': return '🧬';
+        case 'markets': return '📊';
+        default: return '📰';
+      }
+    }
+    async function searchArticles() {
+      const topic = document.getElementById('topic').value;
+      const container = document.getElementById('articles');
+      container.innerHTML = ''; // 清空文章
+
+      try {
+        const response = await fetch(`/api/articles/?category=${topic}`);
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          container.innerHTML = '<p class="text-red-500">載入失敗，請稍後再試。</p>';
+          container.classList.remove('hidden');
+          return;
+        }
+
+        const colors = ['bg-blue-600', 'bg-green-600', 'bg-yellow-600', 'bg-red-600', 'bg-purple-600'];
+
+        data.forEach((article, index) => {
+          const colorClass = colors[index % colors.length];
+
+          const card = document.createElement('div');
+          card.className = 'bg-[#1C1E26] rounded-lg p-5 cursor-pointer border border-transparent hover:border-blue-500 transition';
+          card.onclick = () => selectArticle(index); // 可改為傳 article.id
+
+          card.innerHTML = `
+            <div class="text-2xl mb-4">${getEmojiForCategory(article.category)}</div>
+            <h3 class="text-xl font-semibold mb-1">${article.title}</h3>
+            <p class="text-gray-400 text-sm leading-relaxed">
+              ${(article.summary || article.content.slice(0, 100))}...
+            </p>
+          `;
+
+          container.appendChild(card);
+        });
+
+        container.classList.remove('hidden');
+        setTimeout(() => {
+          container.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      } catch (error) {
+        container.innerHTML = '<p class="text-red-500">伺服器錯誤，請稍後再試。</p>';
+        container.classList.remove('hidden');
+      }
+    }
+
+    function selectArticle(index) {
+      const allCards = document.querySelectorAll('#articles > div');
+      allCards.forEach(card => card.classList.remove('border-blue-500'));
+      allCards[index].classList.add('border-blue-500');
+
+      fetch(`/api/articles/?category=${document.getElementById('topic').value}`)
+        .then(res => res.json())
+        .then(data => {
+          selectedArticle = data[index];
+
+          // 顯示選中的標題
+          const titleBox = document.getElementById('selected-article-title');
+          titleBox.textContent = `你選擇的是：${selectedArticle.title}`;
+          titleBox.classList.remove('hidden');
+
+          document.getElementById('question-options').classList.remove('hidden');
+          document.getElementById('generate-btn').classList.remove('hidden');
+          setTimeout(() => {
+            document.getElementById('question-options').scrollIntoView({ behavior: 'smooth' });
+          }, 300);
+        });
+    }
+
+    function getTypeName(code) {
+      switch (code) {
+        case 'cloze': return '克漏字';
+        case 'reading': return '閱讀理解';
+        case 'summary': return '摘要填空';
+        default: return '未知類型';
+      }
+    }
+
+    let currentQuestions = [];
+
+    async function generateQuestions() {
+      if (!selectedArticle) return;
+
+      const type = document.getElementById("type").value;
+      const questionArea = document.getElementById("question-area");
+      document.getElementById("question-type-display").textContent = `題目類型：${getTypeName(type)}`;
+      document.getElementById("question-title-display").textContent = `${selectedArticle.title}`; 
+      const articleContentEl = document.getElementById("article-content");
+      const questionsContainer = document.getElementById("questions-container");
+      const resultBox = document.getElementById("result");
+
+      // 顯示區塊
+      questionArea.classList.remove("hidden");
+      articleContentEl.textContent = "題目生成中...";
+      questionsContainer.innerHTML = "";
+      resultBox.innerHTML = "";
+
+      try {
+        const res = await fetch("/api/generate_questions/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            title: selectedArticle.title,
+            content: selectedArticle.content,
+            type: type,
+          }),
+        });
+
+        const data = await res.json();
+
+        // 顯示原始文章內容
+        articleContentEl.textContent = data.article_content || selectedArticle.content.slice(0, 300) + "...";
+
+        // 顯示題目
+        if (Array.isArray(data.questions) && data.questions.length > 0) {
+          currentQuestions = data.questions;
+
+          data.questions.forEach((q, idx) => {
+            const qDiv = document.createElement("div");
+            qDiv.className = "mb-6";
+
+            const questionText = document.createElement("p");
+            questionText.className = "font-semibold mb-2";
+            questionText.textContent = `${idx + 1}. ${q.question}`;
+            qDiv.appendChild(questionText);
+
+            if (q.options) {
+              const optionLabels = ["A", "B", "C", "D"];
+              q.options.forEach((option, i) => {
+                const label = document.createElement("label");
+                label.className = "block mb-1 cursor-pointer";
+
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = `question_${idx}`;
+                radio.value = option;
+                radio.className = "mr-2";
+
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(`${optionLabels[i]}. ${option}`));
+                qDiv.appendChild(label);
+              });
+            }
+
+            questionsContainer.appendChild(qDiv);
+            document.getElementById("submit-btn").classList.remove("hidden");
+          });
+        } else {
+          questionsContainer.innerHTML = '<p class="text-red-400">沒有題目資料。</p>';
+        }
+
+        questionArea.scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
+        console.error(error);
+        articleContentEl.textContent = "";
+        questionsContainer.innerHTML = '<p class="text-red-400">生成題目失敗，請稍後再試。</p>';
+      }
+    }
+
+    function submitAnswers() {
+      const resultBox = document.getElementById("result");
+      let correctCount = 0;
+
+      currentQuestions.forEach((q, idx) => {
+        const radios = document.getElementsByName(`question_${idx}`);
+        let userAnswer = null;
+        for (const r of radios) {
+          if (r.checked) {
+            userAnswer = r.value;
+            break;
+          }
+        }
+
+        const questionDiv = radios[0]?.closest('div');  // 找到該題的容器
+
+        let feedback = '';
+
+        if (userAnswer === q.answer) {
+          correctCount++;
+          feedback = `<p class="text-green-400 mt-1">✅ 你答對了</p>`;
+        } else {
+          feedback = `
+            <p class="text-red-400 mt-1">❌ 你答錯了，正確答案是：<span class="font-bold">${q.answer}</span></p>
+          `;
+        }
+
+        feedback += `
+          <p class="text-gray-400 mt-1">詳解：${q.explanation || '無提供詳解'}</p>
+        `;
+
+        if (questionDiv) {
+          let existingFeedback = questionDiv.querySelector('.feedback');
+          if (existingFeedback) {
+            existingFeedback.innerHTML = feedback;
+          } else {
+            const fb = document.createElement('div');
+            fb.className = 'feedback mt-2';
+            fb.innerHTML = feedback;
+            questionDiv.appendChild(fb);
+          }
+        }
+      });
+
+      resultBox.textContent = `你答對了 ${correctCount} 題，共 ${currentQuestions.length} 題`;
+    }
+
+  </script>
+</body>
+</html>
