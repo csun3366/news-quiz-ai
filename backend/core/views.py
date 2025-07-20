@@ -33,18 +33,9 @@ def get_articles_by_category(request):
 
 # 網址: https://api.laozhang.ai/
 LAOZHANG_API_KEYS = [
-    "sk-EchQx6n2KD2XfleCB9590c4b2bBc49B2Bf7b6aA8C673D995", # j199180305
-    "sk-8bwyGOF3gFUvTsRhD3581b0069Dc49A4806c03E999127934", # ga2006144505
-    "sk-8bwyGOF3gFUvTsRhD3581b0069Dc49A4806c03E999127934", # ga2006144505
-    "sk-1L7qavnrVUVcDZyf5aB906B5Cd06427b8f5826F5A727Cc33", # csun3366
-    "sk-wusLtqT5U1g5m8kmD53a67C0E5Be4fCd82939d45F99b34Cc", # llvmphighter
-    "sk-PCdQaYOW3mLb5tu22d9f891b66934771A7EfBe9e4b3527F8", # yuanhan132
-    "sk-Z98Bp3JWYGKp6nkW041140DfF6274999A4833bF7D7985955", # shannie132
-    "sk-cCGMSSzE82mLEQ8m1fB88746D6874219AeE0Fd8b7b4942Cb", # jmotor047
-    "sk-JRtt6ZJ1QFvigS3G56FdB74bEcEc435493Bd32E9C34466De", # woyang84
-    "sk-adwTZ7MUxpICWiaT717d71E086E54161904a1eAb82682dCf", # hoh873700
-    "sk-SmEEDCKQ7lx4sGSd9aFcEc4638A74440A94b618508Be32D8", # frenchplum
-    "sk-BOBJ2be4bf02IukGEb3748C4Af724eBf8163298747761786", # waterspouta0
+    "ssk-XZOM86ImafdhclzI267fDd5eEfD94717A70bD6DbB7D899A1", # pardeep15
+    "sk-nGuEGXAvmPBp3ICW7fC6EaD635C6432a86A46cD38837F367", # usg1l
+    "sk-X4jOQt8d6Gqygrt299B945A84163491c90B15dB7F0352290", # woyapik494
 ]
 def chat_with_laozhang(messages, model="deepseek-v3"):
     base_url = "https://api.laozhang.ai/v1"
