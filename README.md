@@ -21,7 +21,7 @@ NewsMind 利用 AI 將最新英文新聞轉換成互動式的閱讀測驗，幫�
 <img width="1796" height="968" alt="image" src="https://github.com/user-attachments/assets/f3195e2c-88a6-430d-9f1b-674f40b27763" />
 <img width="1796" height="968" alt="image" src="https://github.com/user-attachments/assets/a40a88a4-2622-4786-924e-95c5230ec350" />
 
-## 如何在 Windows 上啟動 comment-gpt
+## 如何在 Windows 上啟動 news-quiz-ai
 ```bash
 $ git clone https://github.com/csun3366/news-quiz-ai.git
 $ cd news-quiz-ai
