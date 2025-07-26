@@ -72,7 +72,8 @@ def generate_questions(request):
     # prompt = build_prompt(title, content, question_type)
 
     try:
-        prompt = f"""
+        if question_type == "reading":
+            prompt = f"""
 You are a question generation expert.
 
 Based on the article below, generate 4 single-choice reading comprehension questions. 
@@ -98,6 +99,59 @@ Article Title: {title}
 Article Content:
 {content}
 """
+        elif question_type == "cloze":
+            prompt = f"""
+You are an expert in designing cloze test (fill-in-the-blank) questions for English learners.
+
+Your task is to create 4 cloze test questions using **only sentences taken directly from the article below**.
+
+For each question:
+- Select **one complete, unmodified sentence** from the article.
+- Blank out **exactly one key word** using `______`.
+- The blanked word should be **semantically important**, and **have only one clearly correct answer** in context.
+- The correct answer should be **obvious to a proficient reader**, based on:
+  - **Grammar rules** (e.g., verb tense, subject-verb agreement)
+  - **Collocations or idiomatic usage**
+  - **Semantic logic** (meaning within the sentence or paragraph)
+- Avoid general or vague words like "have", "do", "get", or "make" unless the context clearly eliminates ambiguity.
+- Provide **4 options** (A, B, C, D), with **only one best answer** that fits **both grammatically and logically**.
+- The correct answer must match one of the options exactly.
+- Include a **brief explanation**:
+  - Why the correct answer fits best.
+  - Why each of the other options is incorrect in this context.
+
+Then, return a version of the article with the same 4 words blanked out in the original locations.  
+Each blank should be replaced by `(n) ______` where `n` is the question number (1 to 4), matching the order of the questions.  
+For example, the first blank is `(1) ______`, the second blank is `(2) ______`, and so on.
+
+⚠️ VERY IMPORTANT:
+- Do NOT write your own sentences.
+- Do NOT blank vague or generic words.
+- Do NOT create blanks that have more than one plausible answer.
+- Each blank should have **only one contextually and grammatically correct answer**.
+
+### Output Format:
+Return valid JSON in the following structure:
+
+{{
+  "article_cloze": "...",   // The original article with the 4 target words replaced by `(n) ______`
+  "questions": [
+    {{
+      "sentence": "...",           // The original sentence with one word replaced by `(n) ______`
+      "options": ["...", "...", "...", "..."],
+      "answer": "...",
+      "explanation": "..."
+    }},
+    ...
+  ]
+}}
+
+### Article Title:
+{title}
+
+### Article Content:
+{content}
+"""
         print(prompt)
 
         # # Step 2: AI分析
@@ -117,8 +171,9 @@ Article Content:
         except Exception as e:
             return JsonResponse({"error": "JSON parsing failed", "raw": summary}, status=500)
 
+        print(questions["article_cloze"])
         return JsonResponse({
-            "article_content": content,
+            "article_content": questions["article_cloze"],
             "questions": questions["questions"]
         })
 

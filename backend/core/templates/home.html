@@ -58,6 +58,7 @@
       <label for="type" class="block mb-2 text-lg font-medium mt-8">選擇題型：</label>
       <select id="type" class="bg-[#1C1E26] border border-gray-600 rounded px-4 py-2 w-full text-lg focus:outline-none focus:ring-2 focus:ring-green-500">
         <option value="reading">閱讀理解</option>
+        <option value="cloze">克漏字</option>
         <!-- TODO: 目前只支援閱讀理解 -->
         <!-- <option value="cloze">克漏字</option>  -->
         <!-- <option value="summary">摘要填空</option>  -->
@@ -244,7 +245,6 @@
       const questionsContainer = document.getElementById("questions-container");
       const resultBox = document.getElementById("result");
 
-      // 顯示區塊
       questionArea.classList.remove("hidden");
       articleContentEl.textContent = "題目生成中...";
       questionsContainer.innerHTML = "";
@@ -262,11 +262,12 @@
         });
 
         const data = await res.json();
+        if (type !== "cloze") {
+          articleContentEl.textContent = data.article_content;
+        } else {
+          articleContentEl.textContent = data.article_content || selectedArticle.content.slice(0, 300) + "...";
+        }
 
-        // 顯示原始文章內容
-        articleContentEl.textContent = data.article_content || selectedArticle.content.slice(0, 300) + "...";
-
-        // 顯示題目
         if (Array.isArray(data.questions) && data.questions.length > 0) {
           currentQuestions = data.questions;
 
@@ -274,11 +275,20 @@
             const qDiv = document.createElement("div");
             qDiv.className = "mb-6";
 
+            // 題幹區塊
             const questionText = document.createElement("p");
             questionText.className = "font-semibold mb-2";
-            questionText.textContent = `${idx + 1}. ${q.question}`;
+
+            if (type === "cloze") {
+              questionText.innerHTML = `${idx + 1}. ${q.sentence}`;
+            } else {
+              // 閱讀理解題
+              questionText.textContent = `${idx + 1}. ${q.question}`;
+            }
+
             qDiv.appendChild(questionText);
 
+            // 選項
             if (q.options) {
               const optionLabels = ["A", "B", "C", "D"];
               q.options.forEach((option, i) => {
