@@ -40,6 +40,8 @@ LAOZHANG_API_KEYS = [
     "sk-yyJ2Cxg4FlGUiyWTB3F396FeCcC6427798F27c24020bD577", # chevonne.72
     "sk-LRJ147WrEMXlyxgv2aA86a4b5e8b45949bE24a70024f2951", # neofqxqs
     "sk-ViLG6Ho69IKbnoVS7c9fB32380C84aAdA8A12cC573C497B8", # duj0xmlh
+    "sk-f0baX7OE1LuCRHI66230383665264977965c9c5d93C94002", # peugeot
+    "sk-DkYe93FShvyPGVC0A043AaF3767f4a309aB34a4174FfE008", # karema92 
 ]
 def chat_with_laozhang(messages, model="deepseek-v3"):
     base_url = "https://api.laozhang.ai/v1"
