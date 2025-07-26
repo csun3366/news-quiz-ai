@@ -5,6 +5,7 @@ class Article(models.Model):
     summary = models.TextField(blank=True)                 # 摘要可留空
     content = models.TextField()                           # 內文
     url = models.URLField(unique=True)                     # 原始文章連結
+    source = models.CharField(max_length=50, default='CNN')
     category = models.CharField(max_length=50)             # 分類，如 world, tech...
     published_at = models.DateTimeField()                  # 爬到時的時間
 

@@ -74,6 +74,7 @@ def fetch_cnn_articles(category='business', limit=10):
             summary=summary,
             content=content,
             url=url,
+            source='CNN',
             category=category,
             published_at=datetime.now()
         )

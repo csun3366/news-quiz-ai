@@ -24,7 +24,8 @@
       <div class="mb-6 text-left">
         <label for="source" class="block mb-2 text-lg font-medium">選擇來源：</label>
         <select id="source" class="bg-[#1C1E26] border border-gray-600 rounded px-4 py-2 w-full text-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-          <option value="cnn">CNN</option>
+          <option value="CNN">CNN</option>
+          <option value="BBC">BBC</option>
         </select>
       </div>
 
@@ -103,6 +104,42 @@
 
   <!-- JS -->
   <script>
+    const topicSelect = document.getElementById('topic');
+    const sourceSelect = document.getElementById('source');
+
+    const topics = {
+      CNN: [
+        { value: 'world', label: '國際' },
+        { value: 'tech', label: '科技' },
+        { value: 'business', label: '商業' },
+        { value: 'entertainment', label: '娛樂' },
+        { value: 'sport', label: '運動' },
+      ],
+      BBC: [
+        { value: 'news', label: '新聞' },
+        { value: 'sport', label: '運動' },
+        { value: 'business', label: '商業' },
+        { value: 'innovation', label: '創新' },
+        { value: 'culture', label: '文化' },
+      ]
+    };
+
+    function updateTopicOptions() {
+      const selectedSource = sourceSelect.value;
+      const selectedTopics = topics[selectedSource] || [];
+
+      topicSelect.innerHTML = '';
+      selectedTopics.forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.value;
+        option.textContent = opt.label;
+        topicSelect.appendChild(option);
+      });
+    }
+
+    sourceSelect.addEventListener('change', updateTopicOptions);
+    window.addEventListener('DOMContentLoaded', updateTopicOptions);
+
     function getEmojiForCategory(category) {
       switch (category) {
         case 'world': return '🌍';
@@ -114,12 +151,13 @@
       }
     }
     async function searchArticles() {
+      const source = document.getElementById('source').value;
       const topic = document.getElementById('topic').value;
       const container = document.getElementById('articles');
       container.innerHTML = ''; // 清空文章
 
       try {
-        const response = await fetch(`/api/articles/?category=${topic}`);
+        const response = await fetch(`/api/articles/?source=${source}&category=${topic}`);
         const data = await response.json();
 
         if (!Array.isArray(data)) {
@@ -163,7 +201,10 @@
       allCards.forEach(card => card.classList.remove('border-blue-500'));
       allCards[index].classList.add('border-blue-500');
 
-      fetch(`/api/articles/?category=${document.getElementById('topic').value}`)
+      const source = document.getElementById('source').value;
+      const topic = document.getElementById('topic').value;
+
+      fetch(`/api/articles/?source=${source}&category=${topic}`)
         .then(res => res.json())
         .then(data => {
           selectedArticle = data[index];

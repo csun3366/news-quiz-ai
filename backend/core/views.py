@@ -12,22 +12,23 @@ def home(request):
     return render(request, 'home.html')
 
 def get_articles_by_category(request):
+    print("get_articles_by_category")
+    source = request.GET.get('source')
     category = request.GET.get('category')
-    if not category:
-        return JsonResponse({"error": "缺少分類參數"}, status=400)
 
-    articles = Article.objects.filter(category=category).order_by('-published_at')[:10]
+    if not source or not category:
+        return JsonResponse({"error": "缺少來源或分類參數"}, status=400)
 
-    data = []
-    for article in articles:
-        data.append({
-            'title': article.title,
-            'summary': article.summary,
-            'content': article.content,
-            'url': article.url,
-            'category': article.category,
-            'published_at': article.published_at.strftime('%Y-%m-%d %H:%M'),
-        })
+    articles = Article.objects.filter(source=source, category=category).order_by('-published_at')[:10]
+
+    data = [{
+        'title': article.title,
+        'summary': article.summary,
+        'content': article.content,
+        'url': article.url,
+        'category': article.category,
+        'published_at': article.published_at.strftime('%Y-%m-%d %H:%M'),
+    } for article in articles]
 
     return JsonResponse(data, safe=False)
 
@@ -120,25 +121,7 @@ Article Content:
             "article_content": content,
             "questions": questions["questions"]
         })
-        questions = {
-        "questions": [
-            {
-            "question": "What did the U.S. president emphasize in the speech?",
-            "options": ["Multilateral cooperation", "Unilateralism", "Economic sanctions", "Military intervention"],
-            "answer": "Multilateral cooperation"
-            },
-            {
-            "question": "How effective is the new generation vaccine?",
-            "options": ["Effectively controls the virus", "Ineffective", "Under research", "Severe side effects"],
-            "answer": "Effectively controls the virus"
-            }
-        ]
-        }
 
-        return JsonResponse({
-            "article_content": content,
-            "questions": questions["questions"]
-        })
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
