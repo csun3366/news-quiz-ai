@@ -173,9 +173,8 @@ Return valid JSON in the following structure:
         except Exception as e:
             return JsonResponse({"error": "JSON parsing failed", "raw": summary}, status=500)
 
-        print(questions["article_cloze"])
         return JsonResponse({
-            "article_content": questions["article_cloze"],
+            "article_content": content,
             "questions": questions["questions"]
         })
 

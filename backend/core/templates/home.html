@@ -4,6 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>NewsMind</title>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-MD3XXD8H9B"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-MD3XXD8H9B');
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -58,7 +67,6 @@
       <label for="type" class="block mb-2 text-lg font-medium mt-8">選擇題型：</label>
       <select id="type" class="bg-[#1C1E26] border border-gray-600 rounded px-4 py-2 w-full text-lg focus:outline-none focus:ring-2 focus:ring-green-500">
         <option value="reading">閱讀理解</option>
-        <option value="cloze">克漏字</option>
         <!-- TODO: 目前只支援閱讀理解 -->
         <!-- <option value="cloze">克漏字</option>  -->
         <!-- <option value="summary">摘要填空</option>  -->
