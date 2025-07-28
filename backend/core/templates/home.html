@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>NewsMind</title>
+  <title>NewsMind - 每日 CNN、BBC 國際新聞英文閱讀練習｜AI 自動生成題目</title>
+  <link rel="alternate" hreflang="zh-Hant" href="https://newsmind-ai.ix.tc/" />
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-MD3XXD8H9B"></script>
   <script>
@@ -22,12 +23,42 @@
       scroll-behavior: smooth;
     }
   </style>
+  <meta name="robots" content="index, follow" />
+  <meta name="description" content="用 NewsMind 練習英文閱讀力，每天一篇國際新聞（CNN、BBC），AI 自動生成練習題，幫助你輕鬆提升英文理解力。" />
+  <meta name="keywords" content="英文閱讀, AI 英文學習, CNN, BBC, 新聞英文, 英文理解力" />
+  <link rel="canonical" href="https://newsmind-ai.ix.tc/" />
+
+  <!-- Open Graph for social sharing -->
+  <meta property="og:title" content="NewsMind - AI 英文新聞閱讀練習平台" />
+  <meta property="og:description" content="用 AI 將每日國際新聞變成英文閱讀理解練習，從 CNN、BBC 學習地道英文。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://newsmind-ai.ix.tc/" />
+  <!-- <meta property="og:image" content="https://news-mind.com/og-image.jpg" />  -->
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NewsMind - 每日 CNN、BBC 國際新聞英文閱讀練習" />
+  <meta name="twitter:description" content="每天一篇英文新聞 + AI 自動生成題目，強化閱讀理解力。" />
+  <!-- <meta name="twitter:image" content="https://newsmind-ai.ix.tc/og-image.jpg" />  -->
+
+  <!-- JSON-LD 結構化資料（可提升 SEO）-->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "NewsMind",
+    "url": "https://newsmind-ai.ix.tc/",
+    "description": "NewsMind 是一個由 AI 驅動的英文閱讀練習平台，透過國際新聞訓練英文理解力。",
+    "inLanguage": "zh-Hant"
+  }
+  </script>
 </head>
 <body class="bg-[#0F1117] text-white min-h-screen">
   <!-- 主題選擇區塊 -->
   <div class="flex items-center justify-center min-h-screen" id="topic-section">
     <div class="w-full max-w-xl px-6 text-center">
       <h1 class="text-5xl font-extrabold mb-4 tracking-tight">NewsMind</h1>
+      <h2 class="sr-only">開始你的 AI 新聞英文閱讀練習</h2>
       <h3 class="text-lg text-gray-400 mb-10">用 AI 把國際新聞變成你的每日閱讀練習</h3>
 
       <div class="mb-6 text-left">
@@ -56,8 +87,8 @@
   </div>
 
   <!-- 文章區塊 -->
-  <div class="max-w-5xl mx-auto px-6 pt-6" id="content-section">
-    <div id="articles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden mt-4"></div>
+  <section class="max-w-5xl mx-auto px-6 pt-6" id="content-section">
+    <section id="articles" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden mt-4"></section>
 
     <!-- 顯示選取的文章標題 -->
     <div id="selected-article-title" class="hidden mt-10 mb-4 text-xl font-semibold text-white"></div>
@@ -79,7 +110,7 @@
     </button>
 
     <!-- 題目區 -->
-    <div id="question-area" class="hidden bg-[#1C1E26] p-6 rounded-lg">
+    <section id="question-area" class="hidden bg-[#1C1E26] p-6 rounded-lg">
       <!-- 動態標題：顯示題型與文章標題 -->
       <!-- 題目資訊 -->
       <div class="mb-6">
@@ -105,11 +136,11 @@
               id="submit-btn">
         送出答案
       </button>
-    </div>
+    </section >
 
     <!-- 底部裝飾 -->
     <div class="mt-12 h-2 w-full bg-gradient-to-r from-blue-600 via-blue-400 to-gray-500 rounded-full"></div>
-  </div>
+  </section>
 
   <!-- JS -->
   <script>
@@ -180,7 +211,7 @@
         data.forEach((article, index) => {
           const colorClass = colors[index % colors.length];
 
-          const card = document.createElement('div');
+          const card = document.createElement('article');
           card.className = 'bg-[#1C1E26] rounded-lg p-5 cursor-pointer border border-transparent hover:border-blue-500 transition';
           card.onclick = () => selectArticle(index); // 可改為傳 article.id
 
@@ -206,7 +237,7 @@
     }
 
     function selectArticle(index) {
-      const allCards = document.querySelectorAll('#articles > div');
+      const allCards = document.querySelectorAll('#articles > article');
       allCards.forEach(card => card.classList.remove('border-blue-500'));
       allCards[index].classList.add('border-blue-500');
 

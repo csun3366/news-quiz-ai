@@ -5,4 +5,6 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('api/articles/', views.get_articles_by_category),
     path('api/generate_questions/', views.generate_questions, name='generate_questions'),
+    path("sitemap.xml", views.sitemap_view, name="sitemap"),
+    path("robots.txt", views.robots_txt_view, name="robots"),
 ]

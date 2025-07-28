@@ -2,14 +2,37 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import Article
 from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 from django.http import JsonResponse
+from django.views.decorators.http import require_GET
 import json
 from openai import OpenAI
 import re
 
-
 def home(request):
     return render(request, 'home.html')
+
+@require_GET
+def sitemap_view(request):
+    content = '''<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://newsmind-ai.ix.tc/</loc>
+    <lastmod>2025-07-28</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+</urlset>'''
+    return HttpResponse(content, content_type='application/xml')
+
+@require_GET
+def robots_txt_view(request):
+    content = """User-agent: *
+Allow: /
+
+Sitemap: https://newsmind-ai.ix.tc/sitemap.xml
+"""
+    return HttpResponse(content, content_type="text/plain")
 
 def get_articles_by_category(request):
     print("get_articles_by_category")
