@@ -1,8 +1,8 @@
-# NewsMind - 用 AI 來生成英文新聞的閱讀測驗
+# NewsTutor - 用 AI 來生成英文新聞的閱讀測驗
 
 ## 簡介
 
-NewsMind 利用 AI 將最新英文新聞轉換成互動式的閱讀測驗，幫助你一邊掌握國際新聞，一邊提升英文閱讀力。
+NewsTutor 利用 AI 將最新英文新聞轉換成互動式的閱讀測驗，幫助你一邊掌握國際新聞，一邊提升英文閱讀力。
 
 ### 功能特色
 
@@ -52,7 +52,7 @@ $ sudo vim /etc/nginx/sites-available/your_project
 將以下內容貼上
 server {
     listen 80;
-    server_name newsmind-ai.ix.tc;  # 或寫 IP，例如 123.123.123.123
+    server_name newstutor-ai.ix.tc;  # 或寫 IP，例如 123.123.123.123
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -86,12 +86,12 @@ $ cd backend/
 $ python manage.py collectstatic
 $ vim backend/settings.py
 ALLOWED_HOSTS加入以下內容
-ALLOWED_HOSTS = ['輸入機器對外IP', 'newsmind-ai.ix.tc']
+ALLOWED_HOSTS = ['輸入機器對外IP', 'newstutor-ai.ix.tc']
 
 $ nohup ../venv/bin/gunicorn backend.wsgi --bind 127.0.0.1:8000 --access-logfile - --error-logfile gunicorn-error.log --timeout 180 > gunicorn.out 2>&1 &
 ```
 
-到這一步，就可以用 http://newsmind-ai.ix.tc 瀏覽網站
+到這一步，就可以用 http://newstutor-ai.ix.tc 瀏覽網站
 
 ### 設定https
 ```bash
@@ -99,4 +99,4 @@ $ sudo apt install certbot python3-certbot-nginx
 $ sudo certbot --nginx
 ```
 
-可以用 https://newsmind-ai.ix.tc 瀏覽網站
+可以用 https://newstutor-ai.ix.tc 瀏覽網站
