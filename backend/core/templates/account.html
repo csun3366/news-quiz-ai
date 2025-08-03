@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-xl mx-auto mt-10 p-6 bg-[#1A1D24] rounded-2xl shadow-xl space-y-6">
+  <h2 class="text-3xl font-bold text-center mb-6">帳戶資訊</h2>
+
+  <div>
+    <p class="text-xl text-gray-300 font-semibold">👤 會員名稱</p>
+    <p class="text-base text-white">{{ name }}</p>
+  </div>
+
+  <div>
+    <p class="text-xl text-gray-300 font-semibold">🪪 會員等級</p>
+    <p class="text-base text-white">
+      {% if plan == 'standard' %}標準會員
+      {% elif plan == 'premium' %}旗艦會員
+      {% else %}免費會員
+      {% endif %}
+    </p>
+  </div>
+
+  {% if plan != 'free' and expires_at %}
+  <div>
+    <p class="text-xl text-gray-300 font-semibold">📅 到期日</p>
+    <p class="text-base text-white">{{ expires_at|date:"Y 年 n 月 j 日 H:i" }}</p>
+  </div>
+  {% endif %}
+
+  <div>
+    <p class="text-xl text-gray-300 font-semibold">📖 剩餘可閱讀文章數</p>
+    <p class="text-base text-white">{{ article_read_count }}</p>
+  </div>
+
+  {% if plan != 'premium' %}
+  <div class="text-center">
+    <a href="/pricing" class="inline-block mt-4 bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 px-4 rounded-xl transition">升級會員</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

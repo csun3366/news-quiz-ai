@@ -1,5 +1,7 @@
-from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 import json
@@ -12,6 +14,32 @@ def pricing(request):
         return render(request, "price.html")
     member = request.user.member
     return render(request, "price.html", {"plan": member.plan})
+
+@login_required
+def account(request):
+    user = request.user
+    try:
+        member = user.member
+    except Member.DoesNotExist:
+        # 若資料遺失則自動補上
+        member = Member.objects.create(user=user, level='free', daily_read_limit=3, remaining_articles=3)
+
+    # 自動檢查是否過期 → 降級為免費會員
+    if member.plan != 'free' and member.expires_at and member.expires_at < timezone.now():
+        member.plan = 'free'
+        member.subscribed_at = None
+        member.expires_at = None
+        member.article_read_count = 3
+        member.save()
+
+    context = {
+        "name": user.get_full_name() or user.username,
+        "plan": member.plan,
+        "expires_at": member.expires_at,
+        "article_read_count": member.article_read_count,
+        "payments": []  # 先不用付款紀錄，之後可補上 Payment.objects.filter(user=user)
+    }
+    return render(request, "account.html", context)
 
 def home(request):
     if not request.user.is_authenticated:

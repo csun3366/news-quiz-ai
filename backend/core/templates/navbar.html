@@ -11,7 +11,7 @@
 
     <!-- 定價按鈕（跟登入同樣樣式） -->
     <a href="/pricing/" class="btn btn-outline-light me-2">
-      定價
+      選擇方案
     </a>
 
     {% if user.is_authenticated %}
@@ -25,7 +25,7 @@
 
       <!-- 下拉選單 -->
       <div id="avatar-menu" class="hidden absolute right-0 mt-2 w-48 bg-[#2A2C36] rounded-lg shadow-lg text-white z-50">
-        <a href="#" class="block px-4 py-2 hover:bg-gray-700 transition">帳戶資訊</a>
+        <a href="/account" class="block px-4 py-2 hover:bg-gray-700 transition">帳戶資訊</a>
         <button onclick="document.getElementById('logout-modal').classList.remove('hidden')"
                 class="block w-full text-left px-4 py-2 hover:bg-gray-700 transition">
           登出

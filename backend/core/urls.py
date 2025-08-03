@@ -8,4 +8,5 @@ urlpatterns = [
     path("sitemap.xml", views.sitemap_view, name="sitemap"),
     path("robots.txt", views.robots_txt_view, name="robots"),
     path('pricing/', views.pricing, name="pricing"),
+    path('account/', views.account, name="account"),
 ]
