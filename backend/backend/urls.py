@@ -20,4 +20,9 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
+    # 以 /accounts/ 開頭 的網址都會交給裡面指定的模組去處理。例如：
+    # /accounts/login/ → 登入頁
+    # /accounts/signup/ → 註冊頁
+    # /accounts/logout/ → 登出功能
+    path('accounts/', include('allauth.urls')),
 ]

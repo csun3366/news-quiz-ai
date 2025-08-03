@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load socialaccount %}
+
+{% block content %}
+<div class="flex items-center justify-center min-h-screen">
+  <div class="bg-[#1E1F25] p-8 rounded-xl shadow-xl w-full max-w-md">
+    <h2 class="text-center text-white text-xl font-semibold mb-6">登入 NewsMind</h2>
+
+    <!-- Google 登入 -->
+    <form method="post" action="/accounts/google/login/" class="mb-4">
+      {% csrf_token %}
+      <button type="submit" class="w-full flex items-center justify-center bg-white text-black py-2 rounded-md hover:bg-gray-200 transition">
+        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google logo" class="w-5 h-5 mr-2">
+        使用 Google 登入
+      </button>
+    </form>
+
+    <div class="flex items-center my-4">
+      <hr class="flex-grow border-gray-600">
+      <span class="px-3 text-gray-400 text-sm">或</span>
+      <hr class="flex-grow border-gray-600">
+    </div>
+
+    <!-- 帳密登入表單 -->
+    <form method="POST" action="{% url 'account_login' %}" class="space-y-4">
+      {% csrf_token %}
+      <input type="email" name="login" placeholder="電子郵件" required
+             class="w-full bg-[#2A2C33] text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+      <input type="password" name="password" placeholder="密碼" required
+             class="w-full bg-[#2A2C33] text-white px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md transition">登入</button>
+    </form>
+
+    <div class="text-center text-sm text-gray-400 mt-4">
+      <a href="{% url 'account_reset_password' %}" class="hover:underline">忘記密碼？</a><br>
+      還沒有帳戶？<a href="{% url 'account_signup' %}" class="text-blue-400 hover:underline">建立帳戶</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
