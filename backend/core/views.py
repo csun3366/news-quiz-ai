@@ -1,16 +1,23 @@
 from django.shortcuts import render
-from django.http import JsonResponse
-from .models import Article
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse
-from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 import json
-from openai import OpenAI
 import re
+from .models import Article
+from .models import Member
+
+def pricing(request):
+    if not request.user.is_authenticated:
+        return render(request, "price.html")
+    member = request.user.member
+    return render(request, "price.html", {"plan": member.plan})
 
 def home(request):
-    return render(request, 'home.html')
+    if not request.user.is_authenticated:
+        return render(request, "home.html")
+    member = request.user.member
+    return render(request, "home.html")
 
 @require_GET
 def sitemap_view(request):

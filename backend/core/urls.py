@@ -7,4 +7,5 @@ urlpatterns = [
     path('api/generate_questions/', views.generate_questions, name='generate_questions'),
     path("sitemap.xml", views.sitemap_view, name="sitemap"),
     path("robots.txt", views.robots_txt_view, name="robots"),
+    path('pricing/', views.pricing, name="pricing"),
 ]
