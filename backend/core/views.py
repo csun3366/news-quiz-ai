@@ -1,3 +1,4 @@
+from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
@@ -44,6 +45,50 @@ def checkout_success(request):
 
 def checkout_cancel(request):
     return render(request, 'stripe_fail.html')
+
+# 這是當付款動作完成後 可以把要做的事情(比如: 升級會員等級)寫在這裡
+# local端如何測試:
+# 1. 下載 stripe
+# 2. $ stripe login
+# 3. $ stripe listen --forward-to localhost:8000/stripe-webhook/
+# 4. 將 whsec開頭的key貼到下方的endpoint_secret
+@csrf_exempt
+def stripe_webhook(request):
+    payload = request.body
+    sig_header = request.META['HTTP_STRIPE_SIGNATURE']
+    endpoint_secret = 'whsec_bb6ea2bda9559490df4ec78c80fc0b03c8ab9dd4ec56177b756ea22e0481bed9'  # 需從 Stripe Console 取得
+    event = None
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, endpoint_secret
+        )
+    except (ValueError, stripe.error.SignatureVerificationError):
+        return HttpResponse(status=400)
+
+    if event['type'] == 'checkout.session.completed':
+        session = event['data']['object']
+        user_id = session['metadata'].get('user_id')
+        plan = session['metadata'].get('plan')
+        print(user_id)
+        print(plan)
+
+        try:
+            member = Member.objects.get(user__id=user_id)
+            member.plan = plan
+            member.subscribed_at = timezone.now()
+            member.expires_at = member.subscribed_at + timedelta(days=30)
+            if plan == 'standard':
+                member.article_read_count = 30
+            elif plan == 'premium':
+                member.article_read_count = 100
+            else:
+                print("[ERROR]: No this plan")
+            member.save()
+        except Member.DoesNotExist:
+            pass
+
+    return HttpResponse(status=200)
 
 def pricing(request):
     if not request.user.is_authenticated:
