@@ -44,7 +44,7 @@
         {% if plan == "standard" or plan == "premium" %}
           <a href="/" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即開始</a>
         {% else %}
-          <a href="#" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即訂閱</a>
+          <a href="{% url 'create-checkout-session' 'standard' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即訂閱</a>
         {% endif %}
       {% else %}
         <a href="/accounts/google/login/" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即開始</a>
@@ -66,7 +66,7 @@
         {% if plan == "premium" %}
           <a href="/" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即開始</a>
         {% else %}
-          <a href="#" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即訂閱</a>
+          <a href="{% url 'create-checkout-session' 'premium' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即訂閱</a>
         {% endif %}
       {% else %}
         <a href="/accounts/google/login/" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即開始</a>

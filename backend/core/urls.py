@@ -9,4 +9,7 @@ urlpatterns = [
     path("robots.txt", views.robots_txt_view, name="robots"),
     path('pricing/', views.pricing, name="pricing"),
     path('account/', views.account, name="account"),
+    path('create-checkout/<str:plan>/', views.create_checkout_session, name='create-checkout-session'),
+    path('success/', views.checkout_success, name='checkout-success'),
+    path('cancel/', views.checkout_cancel, name='checkout-cancel'),
 ]

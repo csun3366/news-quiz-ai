@@ -1,13 +1,49 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
 import json
 import re
+import stripe
 from .models import Article
 from .models import Member
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+
+PLAN_PRICE_ID = {
+    'standard': 'price_1Rs3WH2asRw9bXZoXj8vTtCV', #標準版3
+    'premium': 'price_1RrvN62asRw9bXZodEn76qic', #旗艦版
+}
+
+@login_required
+def create_checkout_session(request, plan):
+    price_id = PLAN_PRICE_ID.get(plan)
+    if not price_id:
+        return JsonResponse({'error': 'Invalid plan'})
+
+    checkout_session = stripe.checkout.Session.create(
+        payment_method_types=['card'],
+        mode='payment',
+        customer_email=request.user.email,
+        line_items=[{
+            'price': price_id,
+            'quantity': 1,
+        }],
+        metadata={'user_id': request.user.id, 'plan': plan},
+        success_url=request.build_absolute_uri(reverse('checkout-success')),
+        cancel_url=request.build_absolute_uri(reverse('checkout-cancel')),
+    )
+    return HttpResponseRedirect(checkout_session.url)
+
+def checkout_success(request):
+    return render(request, 'stripe_success.html')
+
+def checkout_cancel(request):
+    return render(request, 'stripe_fail.html')
 
 def pricing(request):
     if not request.user.is_authenticated:

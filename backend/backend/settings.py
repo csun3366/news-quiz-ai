@@ -75,6 +75,10 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+# Stripe API 金鑰
+STRIPE_SECRET_KEY = 'sk_test_51RrcFe2asRw9bXZoIPSI7joE16R0q00fyYtfpb4IyjBa4cpYdWmlOo5cgsVnZQbmuR5TuGCxOzScRN5wFP3BZjpJ00DyvbPUJY'
+STRIPE_PUBLIC_KEY = 'pk_test_51RrcFe2asRw9bXZonowtq9jjC2VDnu7f1tsmny1DXeku2alOy7VE0nyiCOMzBCnk0rppVDJIqiVq4KUJeinQgM8m00nZ3s3lNS'
+
 MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
