@@ -77,12 +77,28 @@
 
       <!-- 顯示答題結果 -->
       <div id="result" class="text-green-400 font-semibold mt-4"></div>
-
       <button onclick="submitAnswers()"
               class="mt-4 bg-blue-600 hover:bg-blue-700 px-5 py-2 rounded text-white font-semibold hidden"
               id="submit-btn">
         送出答案
       </button>
+      
+      <!-- 單字與片語學習區 -->
+      <div id="vocab-phrase-section" class="mt-10 hidden">
+        <h3 class="text-2xl font-semibold text-white mb-4">📚 單字與片語解析</h3>
+
+        <!-- 單字 -->
+        <div id="vocabulary-list" class="mb-8">
+          <h4 class="text-xl font-semibold text-blue-400 mb-2">🔤 單字解析</h4>
+          <ul class="space-y-4 text-gray-300 text-lg list-disc pl-6"></ul>
+        </div>
+
+        <!-- 片語 -->
+        <div id="phrase-list">
+          <h4 class="text-xl font-semibold text-green-400 mb-2">🧩 片語解析</h4>
+          <ul class="space-y-4 text-gray-300 text-lg list-disc pl-6"></ul>
+        </div>
+      </div>
     </section >
 
     <!-- 底部裝飾 -->
@@ -299,6 +315,50 @@
         } else {
           questionsContainer.innerHTML = '<p class="text-red-400">沒有題目資料。</p>';
         }
+
+        // 顯示單字與片語
+          const vocabSection = document.getElementById("vocab-phrase-section");
+          const vocabList = document.querySelector("#vocabulary-list ul");
+          const phraseList = document.querySelector("#phrase-list ul");
+
+          console.log(data)
+          if (Array.isArray(data.vocabulary) && data.vocabulary.length > 0) {
+            vocabList.innerHTML = '';
+            data.vocabulary.forEach(v => {
+              const item = document.createElement('li');
+              item.innerHTML = `
+  <div class="pl-4 mb-4">
+    <p class="text-lg font-bold text-white">
+      ${v.word} <span class="text-sm italic text-gray-300 ml-2">(${v.part_of_speech})</span>
+    </p>
+    <p class="text-white">${v.translation}</p>
+    <p class="text-sm text-gray-300">${v.example}</p>
+  </div>
+`;
+              vocabList.appendChild(item);
+              console.log(item.innerHTML)
+            });
+          }
+
+          if (Array.isArray(data.phrases) && data.phrases.length > 0) {
+            phraseList.innerHTML = '';
+            data.phrases.forEach(p => {
+              const item = document.createElement('li');
+              item.innerHTML = `
+  <div class="pl-4 mb-4">
+    <p class="text-lg font-bold text-white">
+      ${p.phrase}
+    </p>
+    <p class="text-white">${p.translation}</p>
+    <p class="text-sm text-gray-300">${p.example}</p>
+  </div>
+`;
+              phraseList.appendChild(item);
+              console.log(item.innerHTML)
+            });
+          }
+
+          vocabSection.classList.remove("hidden");
 
         questionArea.scrollIntoView({ behavior: "smooth" });
       } catch (error) {

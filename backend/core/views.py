@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET
+from openai import OpenAI
 import json
 import re
 import stripe
@@ -215,21 +216,64 @@ def generate_questions(request):
     try:
         if question_type == "reading":
             prompt = f"""
-You are a question generation expert.
+You are a question generation expert and an English teacher.
 
-Based on the article below, generate 4 single-choice reading comprehension questions. 
-Each question should have 4 options (A, B, C, D) and only one correct answer.
-For each question, also provide a detailed explanation of why the answer is correct.
+Based on the article below, perform the following tasks:
 
-Return the result in valid JSON format, using the following structure:
+1. Generate 4 single-choice reading comprehension questions.
+   - Each question should have 4 options (A, B, C, D) and only one correct answer.
+   - For each question, provide a detailed explanation of why the correct answer is correct.
+   - Focus on reading comprehension skills such as main idea, vocabulary-in-context, inference, or details.
+
+2. Extract 10 important vocabulary words from the article.
+   For each word, include:
+   - The word itself
+   - Its part of speech (e.g., noun, verb, adjective, etc.)
+   - A clear and simple English definition written for English learners
+   - A brief and accurate Chinese translation（繁體中文）
+   - One meaningful English example sentence that shows how the word is used in context
+
+3. Extract 5 useful phrases or idioms from the article.
+   For each phrase, include:
+   - The phrase
+   - Its part of speech or grammatical role (e.g., idiom, phrasal verb, expression)
+   - A clear and simple English definition
+   - A brief and accurate Chinese translation（繁體中文）
+   - One meaningful English example sentence that shows how the phrase is used in context
+
+Important formatting instructions:
+- Do NOT omit the "part_of_speech" field for either words or phrases.
+- Use clear JSON formatting as below.
+
+Return the result in valid JSON format with the following structure:
 
 {{
   "questions": [
     {{
       "question": "...",
-      "options": ["...", "...", "...", "..."],
-      "answer": "...",
+      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
+      "answer": "C",
       "explanation": "..."
+    }},
+    ...
+  ],
+  "vocab": [
+    {{
+      "word": "...",
+      "part_of_speech": "...",
+      "definition": "...",
+      "translation": "...",
+      "example": "..."
+    }},
+    ...
+  ],
+  "phrases": [
+    {{
+      "phrase": "...",
+      "part_of_speech": "...",
+      "definition": "...",
+      "translation": "...",
+      "example": "..."
     }},
     ...
   ]
@@ -314,7 +358,9 @@ Return valid JSON in the following structure:
 
         return JsonResponse({
             "article_content": content,
-            "questions": questions["questions"]
+            "questions": questions["questions"],
+            "vocabulary": questions["vocab"],
+            "phrases": questions["phrases"],
         })
 
     except Exception as e:
