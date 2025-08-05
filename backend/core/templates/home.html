@@ -52,9 +52,15 @@
     </div>
 
     <!-- 生成試題按鈕 -->
+    {% if article_read_count <= 0 %}
+    <button id="generate-btn" onclick="generateQuestionsForNoQuota()" class="hidden bg-green-600 hover:bg-green-700 w-full py-3 text-lg font-semibold rounded mb-10 transition-all duration-200">
+      生成練習題
+    </button>
+    {% else %}
     <button id="generate-btn" onclick="generateQuestions()" class="hidden bg-green-600 hover:bg-green-700 w-full py-3 text-lg font-semibold rounded mb-10 transition-all duration-200">
       生成練習題
     </button>
+    {% endif %}
 
     <!-- 題目區 -->
     <section id="question-area" class="hidden bg-[#1C1E26] p-6 rounded-lg">
@@ -245,6 +251,12 @@
         case 'summary': return '摘要填空';
         default: return '未知類型';
       }
+    }
+
+    async function generateQuestionsForNoQuota() {
+      alert("本月額度已用完，請前往升級方案！");
+      window.location.href = "/pricing";
+      return;
     }
 
     let currentQuestions = [];

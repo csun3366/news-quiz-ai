@@ -127,7 +127,7 @@ def home(request):
     if not request.user.is_authenticated:
         return render(request, "home.html")
     member = request.user.member
-    return render(request, "home.html")
+    return render(request, "home.html", {"article_read_count": member.article_read_count})
 
 @require_GET
 def sitemap_view(request):
@@ -251,8 +251,8 @@ Return the result in valid JSON format with the following structure:
   "questions": [
     {{
       "question": "...",
-      "options": ["A. ...", "B. ...", "C. ...", "D. ..."],
-      "answer": "C",
+      "options": ["...", "...", "...", "..."],
+      "answer": "...",
       "explanation": "..."
     }},
     ...
@@ -355,6 +355,14 @@ Return valid JSON in the following structure:
                 questions = {"questions": []}
         except Exception as e:
             return JsonResponse({"error": "JSON parsing failed", "raw": summary}, status=500)
+
+        member = request.user.member
+        remaining_count = member.article_read_count
+        if remaining_count >= 1:
+            member.article_read_count = remaining_count - 1
+        else:
+            member.article_read_count = 0
+        member.save()
 
         return JsonResponse({
             "article_content": content,
