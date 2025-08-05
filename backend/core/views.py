@@ -42,7 +42,20 @@ def create_checkout_session(request, plan):
     return HttpResponseRedirect(checkout_session.url)
 
 def checkout_success(request):
-    return render(request, 'stripe_success.html')
+    member = request.user.member
+
+    # 方案名稱對應表
+    plan_display = {
+        'free': '免費方案',
+        'standard': '標準版',
+        'premium': '旗艦版',
+    }
+    plan_name = plan_display.get(member.plan, member.plan)
+
+    return render(request, 'stripe_success.html', {
+        'plan_name': plan_name,
+        'expires_at': member.expires_at
+    })
 
 def checkout_cancel(request):
     return render(request, 'stripe_fail.html')
