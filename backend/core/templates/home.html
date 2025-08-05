@@ -159,6 +159,13 @@
       const container = document.getElementById('articles');
       container.innerHTML = ''; // 清空文章
 
+      // 判斷文章長度
+      function getArticleLengthLabel(wordCount) {
+        if (wordCount < 500) return { label: "短篇", color: "bg-green-500/80" };
+        if (wordCount < 1500) return { label: "中篇", color: "bg-yellow-500/80" };
+        return { label: "長篇", color: "bg-red-500/80" };
+      }
+
       try {
         const response = await fetch(`/api/articles/?source=${source}&category=${topic}`);
         const data = await response.json();
@@ -169,21 +176,27 @@
           return;
         }
 
-        const colors = ['bg-blue-600', 'bg-green-600', 'bg-yellow-600', 'bg-red-600', 'bg-purple-600'];
-
         data.forEach((article, index) => {
-          const colorClass = colors[index % colors.length];
+          const wordCount = (article.content || "").split(/\s+/).length;
+          const lengthInfo = getArticleLengthLabel(wordCount);
 
           const card = document.createElement('article');
-          card.className = 'bg-[#1C1E26] rounded-lg p-5 cursor-pointer border border-transparent hover:border-blue-500 transition';
+          card.className = 'relative bg-[#1C1E26] rounded-lg p-5 cursor-pointer border border-transparent hover:border-blue-500 transition';
           card.onclick = () => selectArticle(index); // 可改為傳 article.id
 
           card.innerHTML = `
             <div class="text-2xl mb-4">${getEmojiForCategory(article.category)}</div>
             <h3 class="text-xl font-semibold mb-1">${article.title}</h3>
-            <p class="text-gray-400 text-sm leading-relaxed">
+            <p class="text-gray-400 text-sm leading-relaxed mb-8">
               ${(article.summary || article.content.slice(0, 100))}...
             </p>
+            <!-- 右下角浮動標籤 -->
+            <div class="absolute bottom-3 right-3 flex items-center gap-2 text-xs">
+              <span class="px-2 py-1 rounded-full text-white ${lengthInfo.color} shadow-sm">
+                ${lengthInfo.label}
+              </span>
+              <span class="text-gray-400">${wordCount}字</span>
+            </div>
           `;
 
           container.appendChild(card);
