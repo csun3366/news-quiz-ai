@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load socialaccount %}
   {% block content %}
   <!-- 主題選擇區塊 -->
   <div class="flex items-center justify-center min-h-screen" id="topic-section">
@@ -27,9 +28,15 @@
         </select>
       </div>
 
+      {% if user.is_authenticated %}
       <button onclick="searchArticles()" class="bg-blue-600 hover:bg-blue-700 w-full py-3 text-lg font-semibold rounded transition-all duration-200">
         搜索文章
       </button>
+      {% else %}
+      <button onclick="location.href='{% provider_login_url 'google' %}'" class="bg-blue-600 hover:bg-blue-700 w-full py-3 text-lg font-semibold rounded transition-all duration-200">
+        搜索文章
+      </button>
+      {% endif %}
     </div>
   </div>
 
