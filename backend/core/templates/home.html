@@ -266,8 +266,22 @@
       return;
     }
 
-    let currentQuestions = [];
+    function validateQuestions(questions) {
+      if (!Array.isArray(questions) || questions.length <= 0) {
+        console.error("沒有題目!!!");
+        return false;
+      }
 
+      for (let i = 0; i < questions.length; i++) {
+        if (!questions[i].options.includes(questions[i].answer)) {
+          console.error(`❌ 第 ${i+1} 題 answer 不在 options 中`, questions[i]);
+          return false;
+        }
+      }
+      return true;
+    }
+
+    let currentQuestions = [];
     async function generateQuestions() {
       if (!selectedArticle) return;
 
@@ -283,6 +297,11 @@
       articleContentEl.textContent = "題目生成中...";
       questionsContainer.innerHTML = "";
       resultBox.innerHTML = "";
+      // 單字片語
+      const vocabSection = document.getElementById("vocab-phrase-section");
+      const vocabList = document.querySelector("#vocabulary-list ul");
+      const phraseList = document.querySelector("#phrase-list ul");
+      vocabSection.classList.add("hidden");
 
       try {
         const res = await fetch("/api/generate_questions/", {
@@ -302,9 +321,12 @@
           articleContentEl.textContent = data.article_content || selectedArticle.content.slice(0, 300) + "...";
         }
 
-        if (Array.isArray(data.questions) && data.questions.length > 0) {
-          currentQuestions = data.questions;
+        if (!validateQuestions(data.questions)) {
+          alert("有題目不符合規則，請重新生成！");
+        }
 
+        if (Array.isArray(data.questions) && data.questions.length > 0) { // TODO: remove it, because already in validateQuestions
+          currentQuestions = data.questions
           data.questions.forEach((q, idx) => {
             const qDiv = document.createElement("div");
             qDiv.className = "mb-6";
@@ -349,50 +371,60 @@
         }
 
         // 顯示單字與片語
-          const vocabSection = document.getElementById("vocab-phrase-section");
-          const vocabList = document.querySelector("#vocabulary-list ul");
-          const phraseList = document.querySelector("#phrase-list ul");
-
-          console.log(data)
-          if (Array.isArray(data.vocabulary) && data.vocabulary.length > 0) {
-            vocabList.innerHTML = '';
-            data.vocabulary.forEach(v => {
-              const item = document.createElement('li');
-              item.innerHTML = `
-  <div class="pl-4 mb-4">
-    <p class="text-lg font-bold text-white">
-      ${v.word} <span class="text-sm italic text-gray-300 ml-2">(${v.part_of_speech})</span>
-    </p>
-    <p class="text-white">${v.translation}</p>
-    <p class="text-sm text-gray-300">${v.example}</p>
-  </div>
+        console.log(data)
+        if (Array.isArray(data.vocabulary) && data.vocabulary.length > 0) {
+          vocabList.innerHTML = '';
+          data.vocabulary.forEach(v => {
+            const item = document.createElement('li');
+            item.innerHTML = `
+<div class="pl-4 mb-4">
+  <p class="text-lg font-bold text-white">
+    ${v.word} <span class="text-sm italic text-gray-300 ml-2">(${v.part_of_speech})</span>
+  </p>
+  <p class="text-white">${v.translation}</p>
+  <p class="text-sm text-gray-300">${v.example}</p>
+</div>
 `;
-              vocabList.appendChild(item);
-              console.log(item.innerHTML)
-            });
-          }
+            vocabList.appendChild(item);
+            console.log(item.innerHTML)
+          });
+        }
 
-          if (Array.isArray(data.phrases) && data.phrases.length > 0) {
-            phraseList.innerHTML = '';
-            data.phrases.forEach(p => {
-              const item = document.createElement('li');
-              item.innerHTML = `
-  <div class="pl-4 mb-4">
-    <p class="text-lg font-bold text-white">
-      ${p.phrase}
-    </p>
-    <p class="text-white">${p.translation}</p>
-    <p class="text-sm text-gray-300">${p.example}</p>
-  </div>
+        if (Array.isArray(data.phrases) && data.phrases.length > 0) {
+          phraseList.innerHTML = '';
+          data.phrases.forEach(p => {
+            const item = document.createElement('li');
+            item.innerHTML = `
+<div class="pl-4 mb-4">
+  <p class="text-lg font-bold text-white">
+    ${p.phrase}
+  </p>
+  <p class="text-white">${p.translation}</p>
+  <p class="text-sm text-gray-300">${p.example}</p>
+</div>
 `;
-              phraseList.appendChild(item);
-              console.log(item.innerHTML)
-            });
-          }
+            phraseList.appendChild(item);
+            console.log(item.innerHTML)
+          });
+        }
 
-          vocabSection.classList.remove("hidden");
+        vocabSection.classList.remove("hidden");
 
         questionArea.scrollIntoView({ behavior: "smooth" });
+
+        // 成功生成題目後，呼叫後端扣除文章配額
+        try {
+          const quotaRes = await fetch("/api/decrement_article_quota/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ article_title: selectedArticle.title }),
+          });
+          if (!quotaRes.ok) {
+            console.warn("扣除文章配額失敗");
+          }
+        } catch (quotaErr) {
+          console.warn("扣除文章配額時發生錯誤", quotaErr);
+        }
       } catch (error) {
         console.error(error);
         articleContentEl.textContent = "";
@@ -417,7 +449,9 @@
         const questionDiv = radios[0]?.closest('div');  // 找到該題的容器
 
         let feedback = '';
-
+        console.log("Check: ")
+        console.log(userAnswer)
+        console.log(q.answer)
         if (userAnswer === q.answer) {
           correctCount++;
           feedback = `<p class="text-green-400 mt-1">✅ 你答對了</p>`;

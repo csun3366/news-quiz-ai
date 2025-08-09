@@ -60,7 +60,7 @@ def fetch_cnn_articles(category='business', limit=10):
         article_res = requests.get(url, headers=headers)
         article_soup = BeautifulSoup(article_res.text, 'html.parser')
         paragraphs = article_soup.select("article p") or article_soup.select("div.l-container p")
-        content = '\n'.join(p.get_text(strip=True) for p in paragraphs)
+        content = '\n'.join(p.get_text(" ", strip=False).strip() for p in paragraphs)
 
         if not content.strip():
             print(f"⚠️ 文章內容為空，跳過：{title}")

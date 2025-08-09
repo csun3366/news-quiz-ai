@@ -215,6 +215,22 @@ def chat_with_laozhang(messages, model="deepseek-v3"):
     return "OpenAI 額度用完了 QQ"
 
 @csrf_exempt
+def decrement_article_quota(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only POST allowed'}, status=405)
+
+    member = request.user.member
+    remaining_count = member.article_read_count
+    if remaining_count >= 1:
+        member.article_read_count = remaining_count - 1
+    else:
+        member.article_read_count = 0
+    member.save()
+
+    return JsonResponse({'success': True, 'remaining_quota': member.article_read_count})
+    
+
+@csrf_exempt
 def generate_questions(request):
     if request.method != 'POST':
         return JsonResponse({'error': 'Only POST allowed'}, status=405)
@@ -234,7 +250,9 @@ You are a question generation expert and an English teacher.
 Based on the article below, perform the following tasks:
 
 1. Generate 4 single-choice reading comprehension questions.
-   - Each question should have 4 options (A, B, C, D) and only one correct answer.
+   - Each question should have exactly 4 options (A, B, C, D).
+   - Only one option is correct per question.
+   - The correct answer must be exactly one of the 4 options — the answer string must match exactly the text of one of the options (including spelling, punctuation, and capitalization).
    - For each question, provide a detailed explanation of why the correct answer is correct.
    - Focus on reading comprehension skills such as main idea, vocabulary-in-context, inference, or details.
 
@@ -257,6 +275,7 @@ Based on the article below, perform the following tasks:
 Important formatting instructions:
 - Do NOT omit the "part_of_speech" field for either words or phrases.
 - Use clear JSON formatting as below.
+- Make sure the "answer" string for each question exactly matches one of the 4 "options" strings.
 
 Return the result in valid JSON format with the following structure:
 
@@ -368,14 +387,6 @@ Return valid JSON in the following structure:
                 questions = {"questions": []}
         except Exception as e:
             return JsonResponse({"error": "JSON parsing failed", "raw": summary}, status=500)
-
-        member = request.user.member
-        remaining_count = member.article_read_count
-        if remaining_count >= 1:
-            member.article_read_count = remaining_count - 1
-        else:
-            member.article_read_count = 0
-        member.save()
 
         return JsonResponse({
             "article_content": content,
