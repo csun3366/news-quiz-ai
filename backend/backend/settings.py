@@ -53,6 +53,16 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
+# 帳號設定
+# 登入方式：只允許 email
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# 註冊需要填的欄位（* 代表必填）
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # 可改 'mandatory' 強制驗證
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # 登入 / 登出後的導向
 LOGIN_REDIRECT_URL = '/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'
