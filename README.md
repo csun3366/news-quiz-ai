@@ -99,4 +99,4 @@ $ sudo apt install certbot python3-certbot-nginx
 $ sudo certbot --nginx
 ```
 
-可以用 https://newstutor-ai.ix.tc 瀏覽網站
+可以用 https://newstutor-ai.enia.net 瀏覽網站
