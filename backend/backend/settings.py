@@ -61,7 +61,15 @@ ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
 
 ACCOUNT_EMAIL_VERIFICATION = 'optional'  # 可改 'mandatory' 強制驗證
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+EMAIL_HOST_USER = 'kkpig805@gmail.com'      # 你的 Gmail 帳號
+EMAIL_HOST_PASSWORD = 'jixmdocxvfxcppbl'     # Gmail App 密碼（建議使用App密碼）
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+EMAIL_SUBJECT_PREFIX = '[newstutor-ai] '
 
 # 登入 / 登出後的導向
 LOGIN_REDIRECT_URL = '/'
