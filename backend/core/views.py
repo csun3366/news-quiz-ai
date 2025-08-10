@@ -17,8 +17,8 @@ from .models import Member
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 PLAN_PRICE_ID = {
-    'standard': 'price_1Rs3WH2asRw9bXZoXj8vTtCV', #標準版3
-    'premium': 'price_1RrvN62asRw9bXZodEn76qic', #旗艦版
+    'standard': 'price_1RuV3l2asRw9bXZovZu4TkLw', #standard
+    'premium': 'price_1RuV3y2asRw9bXZoGspczfyD', #premium
 }
 
 @login_required
@@ -70,7 +70,7 @@ def checkout_cancel(request):
 def stripe_webhook(request):
     payload = request.body
     sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-    endpoint_secret = 'whsec_bb6ea2bda9559490df4ec78c80fc0b03c8ab9dd4ec56177b756ea22e0481bed9'  # 需從 Stripe Console 取得
+    endpoint_secret = 'whsec_NBOg7lj22pZRtDlAH524Z5fyCqmoePJn'  # 需從 Stripe Console 取得
     event = None
 
     try:
