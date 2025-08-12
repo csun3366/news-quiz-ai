@@ -302,6 +302,10 @@
       const vocabList = document.querySelector("#vocabulary-list ul");
       const phraseList = document.querySelector("#phrase-list ul");
       vocabSection.classList.add("hidden");
+      // 將生成按鈕disable
+      const generateBtn = document.getElementById("generate-btn");
+      generateBtn.disabled = true;
+      generateBtn.classList.add("opacity-50", "cursor-not-allowed");
 
       try {
         const res = await fetch("/api/generate_questions/", {
@@ -429,6 +433,10 @@
         console.error(error);
         articleContentEl.textContent = "";
         questionsContainer.innerHTML = '<p class="text-red-400">生成題目失敗，請稍後再試。</p>';
+      } finally {
+        // 生成後 enable 按鈕
+        generateBtn.disabled = false;
+        generateBtn.classList.remove("opacity-50", "cursor-not-allowed");
       }
     }
 
