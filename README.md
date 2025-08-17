@@ -52,7 +52,7 @@ $ sudo vim /etc/nginx/sites-available/your_project
 將以下內容貼上
 server {
     listen 80;
-    server_name newstutor-ai.ix.tc;  # 或寫 IP，例如 123.123.123.123
+    server_name newstutor-ai.hs.vc;  # 或寫 IP，例如 123.123.123.123
 
     location / {
         proxy_pass http://127.0.0.1:8000;
@@ -88,12 +88,12 @@ $ python manage.py makemigrations
 $ python manage.py migrate
 $ vim backend/settings.py
 ALLOWED_HOSTS加入以下內容
-ALLOWED_HOSTS = ['輸入機器對外IP', 'newstutor-ai.ix.tc']
+ALLOWED_HOSTS = ['輸入機器對外IP', 'newstutor-ai.hs.vc']
 
 $ nohup ../venv/bin/gunicorn backend.wsgi --bind 127.0.0.1:8000 --access-logfile - --error-logfile gunicorn-error.log --timeout 180 > gunicorn.out 2>&1 &
 ```
 
-到這一步，就可以用 http://newstutor-ai.ix.tc 瀏覽網站
+到這一步，就可以用 http://newstutor-ai.hs.vc 瀏覽網站
 
 ### 設定https
 ```bash
