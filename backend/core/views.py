@@ -105,10 +105,12 @@ def stripe_webhook(request):
     return HttpResponse(status=200)
 
 def pricing(request):
+    now = timezone.now()
+    promo_active = now.date() <= timezone.datetime(2025, 9, 30).date()
     if not request.user.is_authenticated:
-        return render(request, "price.html")
+        return render(request, "price.html", {"promo_active": promo_active})
     member = request.user.member
-    return render(request, "price.html", {"plan": member.plan})
+    return render(request, "price.html", {"plan": member.plan, "promo_active": promo_active})
 
 @login_required
 def account(request):

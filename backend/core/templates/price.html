@@ -30,26 +30,47 @@
     </div>
 
     <!-- 標準版 -->
-    <div class="bg-[#1C1E26] rounded-lg shadow p-6 flex flex-col relative border-2 border-blue-500">
-      <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">推薦</span>
+    <div class="bg-[#1C1E26] rounded-lg shadow p-6 flex flex-col relative {% if promo_active %}border-2 border-red-500{% else %}border-2 border-blue-500{% endif %}">
+      {% if promo_active %}
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-red-500 text-white text-xs px-3 py-1 rounded-full">限時優惠</span>
+      {% else %}
+        <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs px-3 py-1 rounded-full">推薦</span>
+      {% endif %}
+
       <h3 class="text-lg font-semibold mb-2 text-white">標準版</h3>
       <p class="text-gray-400 mb-4">適合想提升英文閱讀能力的使用者</p>
-      <div class="text-3xl font-bold mb-1">NT$50<span class="text-base font-normal">/月</span></div>
-      <p class="text-sm text-gray-500 mb-6">月付方案</p>
+
+      {% if promo_active %}
+        <div class="text-gray-500 line-through">NT$50<span class="text-base font-normal">/月</span></div>
+        <div class="text-3xl font-bold text-red-400 mb-1">限時免費</div>
+        <p class="text-sm text-gray-500 mb-6">9月底前註冊即可免費</p>
+      {% else %}
+        <div class="text-3xl font-bold mb-1">NT$50<span class="text-base font-normal">/月</span></div>
+        <p class="text-sm text-gray-500 mb-6">月付方案</p>
+      {% endif %}
+
       <ul class="text-sm text-gray-300 mb-6 space-y-2 flex-1">
         <li>✔ 每30天 <span class="font-bold">30 篇</span> 閱讀測驗（共四題）</li>
         <li>✔ 測驗答案與詳解</li>
         <li>✔ 單字與片語解析</li>
         <li>✔ 無廣告</li>
+        {% if promo_active %}
+          <li class="text-red-400 font-semibold">🎁 9月底前註冊即可免費使用</li>
+        {% endif %}
       </ul>
+
       {% if user.is_authenticated %}
         {% if plan == "standard" or plan == "premium" %}
           <a href="/" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即開始</a>
         {% else %}
-          <a href="{% url 'create-checkout-session' 'standard' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即訂閱</a>
+          {% if promo_active %}
+            <a href="{% url 'create-checkout-session' 'standard' %}" class="w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded text-center transition">立即領取免費方案</a>
+          {% else %}
+            <a href="{% url 'create-checkout-session' 'standard' %}" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即訂閱</a>
+          {% endif %}
         {% endif %}
       {% else %}
-        <a href="/accounts/google/login/" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded text-center transition">立即開始</a>
+        <a href="/accounts/google/login/" class="w-full {% if promo_active %}bg-red-500 hover:bg-red-600{% else %}bg-blue-600 hover:bg-blue-700{% endif %} text-white py-2 rounded text-center transition">立即開始</a>
       {% endif %}
     </div>
 
