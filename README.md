@@ -84,6 +84,8 @@ $ pip install whitenoise
 ```bash
 $ cd backend/
 $ python manage.py collectstatic
+$ python manage.py makemigrations
+$ python manage.py migrate
 $ vim backend/settings.py
 ALLOWED_HOSTS加入以下內容
 ALLOWED_HOSTS = ['輸入機器對外IP', 'newstutor-ai.ix.tc']
